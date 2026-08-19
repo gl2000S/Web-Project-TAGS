@@ -1,0 +1,17 @@
+import { NextResponse } from "next/server";
+
+export async function POST() {
+  const res = NextResponse.json(
+    { message: "Logged out" },
+    { status: 200 }
+  );
+
+  // delete cookie
+  res.cookies.set("authToken", "", {
+    httpOnly: true,
+    expires: new Date(0),
+    path: "/",
+  });
+
+  return res;
+}
