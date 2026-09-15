@@ -10,6 +10,7 @@ import { useAuth } from "../context/AuthContext";
 import TAGS_logo from "./TAGS_logo";
 
 type ApiJob = {
+  user_id?: number;
   id?: string;
   userId?: string;
   _id?: string;
@@ -203,7 +204,13 @@ export default function AuthenticatedView() {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete job");
-      setTagJobs((prev) => prev.filter((job) => job._id !== jobId));
+      // FIX: was `job._id !== jobId`. No MySQL row has `_id`, so this was
+      // always `undefined !== jobId` — true for every job — meaning the
+      // filter kept every job and nothing was removed from the list. The
+      // DELETE actually succeeded against the database; the screen just
+      // never reflected it until the next full refetch. Compare on `id`,
+      // the field MySQL rows actually have.
+      setTagJobs((prev) => prev.filter((job) => job.id !== jobId));
     } catch (err) {
       console.error(err);
       alert("Failed to delete job");
@@ -237,8 +244,13 @@ export default function AuthenticatedView() {
       if (!res.ok) throw new Error("Failed to update job");
   
       const data = await res.json();
+      // FIX: same issue as handleDelete — was `job._id === editingJobId`,
+      // which is always `undefined === editingJobId` (false), so the map
+      // never replaced anything. The PUT updates the database correctly;
+      // the list on screen just kept showing the stale pre-edit job until
+      // a refresh. Compare on `id` instead.
       setTagJobs((prev) =>
-        prev.map((job) => (job._id === editingJobId ? data.job : job))
+        prev.map((job) => (job.id === editingJobId ? data.job : job))
       );
       setEditingJobId(null);
       setEditingJobData({});
@@ -511,7 +523,7 @@ export default function AuthenticatedView() {
                         )}
 
                         {/* Owner Actions */}
-                        {job.userId?.toString() === user?.id && (
+                        {job.user_id === user?.id && (
                              <>
                                 <button 
                                     onClick={() => handleEditClick(job)}

@@ -120,3 +120,9 @@ jobs
 
 ## Acknowledgements
 - Dr. Stephens for providing the textbook which helped us understand how to implement certain parts of the website.
+
+
+
+### EXAMPLE ###
+Alex1234@gmail.com
+Alex1234

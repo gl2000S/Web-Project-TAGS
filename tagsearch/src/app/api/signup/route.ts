@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import connectMongoDB from "../../../../config/mongodb";
-import User from "@/models/User";
+// import connectMongoDB from "../../../../config/mongodb";
+import {findUserByEmail, createUser} from "@/models/User";
 
 export async function POST(request: Request) {
+  
   try {
     // Connect to database
-    await connectMongoDB();
+    // await connectMongoDB();
 
     // Read the JSON body from the request
     const { name, email, password } = await request.json();
@@ -20,7 +21,7 @@ export async function POST(request: Request) {
     }
 
     // Check if the email already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await findUserByEmail(email);
     if (existingUser) {
       return NextResponse.json(
         { error: "Email already registered." },
@@ -40,11 +41,7 @@ export async function POST(request: Request) {
     const hashed = await bcrypt.hash(password, 10);
 
     // Create user in database
-    await User.create({
-      name,
-      email,
-      password: hashed,
-    });
+    await createUser(name, email, hashed); 
 
     return NextResponse.json(
       { message: "User registered successfully." },

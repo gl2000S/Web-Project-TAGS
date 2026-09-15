@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import connectMongoDB from "../../../../../config/mongodb";
-import { Job } from "@/models/Jobs";
+//import connectMongoDB from "../../../../../config/mongodb";
+import {getJobById, updateJob, deleteJob} from "@/models/Jobs";
 import jwt from "jsonwebtoken";
 
 function getUserIdFromReq(req: Request) {
@@ -24,7 +24,8 @@ export async function PUT(
     req: Request,
     { params }: { params: Promise<{ id: string }> } // mark as Promise
   ) {
-    await connectMongoDB();
+
+    //await connectMongoDB();
   
     const { id } = await params; // unwrap the promise
     if (!id) {
@@ -35,19 +36,32 @@ export async function PUT(
     if (!userId) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
-  
-    const job = await Job.findById(id);
+
+    const job = await getJobById(id);
     if (!job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
     }
-  
-    if (job.userId.toString() !== userId) {
+
+    if (job.user_id !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
   
     const body = await req.json();
-    const updated = await Job.findByIdAndUpdate(id, body, { new: true });
-  
+
+    await updateJob({
+      id,
+      title: body.title,
+      company: body.company,
+      city: body.city,
+      state: body.state,
+      min_salary: body.min_salary,
+      max_salary: body.max_salary,
+      description: body.description,
+      url: body.url,
+    });
+
+    const updated = await getJobById(id);
+
     return NextResponse.json({ job: updated }, { status: 200 });
   }
   
@@ -55,7 +69,8 @@ export async function PUT(
     req: Request,
     { params }: { params: Promise<{ id: string }> }
   ) {
-    await connectMongoDB();
+
+    //await connectMongoDB();
   
     const { id } = await params;
     if (!id) {
@@ -66,17 +81,17 @@ export async function PUT(
     if (!userId) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
-  
-    const job = await Job.findById(id);
+
+    const job = await getJobById(id);
     if (!job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
     }
-  
-    if (job.userId.toString() !== userId) {
+
+    if (job.user_id !== userId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-  
-    await Job.findByIdAndDelete(id);
+
+    await deleteJob(id);
     return NextResponse.json({ message: "Deleted" }, { status: 200 });
   }
   

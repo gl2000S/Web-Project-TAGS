@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import connectMongoDB from "../../../../config/mongodb";
-import { Job } from "@/models/Jobs";
+//import connectMongoDB from "../../../../config/mongodb";
+import { getAllJobs, createJob } from "@/models/Jobs";
 import jwt from "jsonwebtoken";
 
 export async function GET() {
-  await connectMongoDB();
-  const jobs = await Job.find().sort({ createdAt: -1 }).lean();
+  // await connectMongoDB();
+  const jobs = await getAllJobs();
   return NextResponse.json({ jobs }, { status: 200 });
 }
 
 export async function POST(req: Request) {
-  await connectMongoDB();
+  // await connectMongoDB();
 
   try {
     const cookie = req.headers.get("cookie") || "";
@@ -28,14 +28,20 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const job = new Job({
-      ...body,
-      userId, 
+    await createJob({
+      title: body.title,
+      company: body.company,
+      city: body.city,
+      state: body.state,
+      employment_type: body.employment_type,
+      min_salary: body.min_salary,
+      max_salary: body.max_salary,
+      description: body.description,
+      url: body.url,
+      user_id: userId,
     });
 
-    await job.save();
-
-    return NextResponse.json({ job }, { status: 201 });
+    return NextResponse.json({ message: "Job created successfully." }, { status: 201 });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Failed to create job" }, { status: 500 });

@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import connectMongoDB from "../../../../config/mongodb";
-import User from "@/models/User";
+// import connectMongoDB from "../../../../config/mongodb";
+import {findUserByEmail} from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export async function POST(req: Request) {
   try {
     // 1. Connect to MongoDB
-    await connectMongoDB();
+    //await connectMongoDB();
 
     // 2. Extract login data
     const { email, password } = await req.json();
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     }
 
     // 3. Check if user exists
-    const user = await User.findOne({ email });
+    const user = await findUserByEmail( email );
 
     if (!user) {
       return NextResponse.json(
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     }
 
     // 4. Compare submitted password with hashed password in DB
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password_hash);
 
     if (!isMatch) {
       return NextResponse.json(
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     // 5. Create a JWT
     const token = jwt.sign(
       {
-        id: user._id,
+        id: user.id,
         email: user.email,
         name: user.name,
       },
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       { 
         message: "Login successful.",
         user: {
-            id: user._id, 
+            id: user.id,
             name: user.name,
             email: user.email
         }

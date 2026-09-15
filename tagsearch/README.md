@@ -34,3 +34,14 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Database
+
+As root, from inside the container (for admin tasks — creating users, checking DESCRIBE, that kind of thing):
+
+docker exec -it tagsearch-mysql mysql -u root -p
+
+As tagsearch_app, from your host machine over the network (matching how your actual app connects, useful for checking what your app is actually doing to the data — like confirming a signup landed correctly):
+
+mysql -h 127.0.0.1 -P 3306 -u tagsearch_app -p tagsearch
