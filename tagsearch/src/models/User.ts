@@ -1,3 +1,21 @@
+import pool from "../../config/mysql";
+
+export async function findUserByEmail(email : string) { 
+  const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]) as any;
+
+  if (rows.length == 0) { 
+    return null;
+  }
+  return rows[0];
+}
+
+export async function createUser(name: string, email: string, password_hash: string){
+  await pool.query("INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)", [name,email,password_hash]);
+
+}
+
+
+/** 
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 // Definitiom for a User document
@@ -39,3 +57,5 @@ const User: Model<IUser> =
   mongoose.models.User || mongoose.model<IUser>("User", UserSchema); // automatically sets the collection as 'users' in MongoDB
 
 export default User;
+
+*/
