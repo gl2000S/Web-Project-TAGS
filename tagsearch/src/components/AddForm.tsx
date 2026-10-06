@@ -12,8 +12,8 @@ export default function AddForm() {
       city: "",
       state: "",
       employment_type: "Full-Time",
-      minSalary: "",
-      maxSalary: "",
+      min_salary: "",
+      max_salary: "",
       description: "",
       url: "",
     });
@@ -42,8 +42,8 @@ export default function AddForm() {
                 headers: { "Content-Type": "application/json"},
                 body: JSON.stringify({
                     ...formData,
-                    minSalary: formData.minSalary ? Number(formData.minSalary) : null,
-                    maxSalary: formData.maxSalary ? Number(formData.maxSalary) : null,
+                    min_salary: formData.min_salary ? Number(formData.min_salary) : null,
+                    max_salary: formData.max_salary ? Number(formData.max_salary) : null,
                 }),
             });
 
@@ -58,8 +58,8 @@ export default function AddForm() {
               city: "",
               state: "",
               employment_type: "Full-Time",
-              minSalary: "",
-              maxSalary: "",
+              min_salary: "",
+              max_salary: "",
               description: "",
               url: "",
             });
@@ -113,11 +113,11 @@ export default function AddForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="minSalary" className={labelClasses}>Min Salary</label>
-                    <input name="minSalary" type="number" placeholder="Min Salary" value={formData.minSalary} onChange={handleChange} className={inputClasses} />
+                    <input name="minSalary" type="number" placeholder="Min Salary" value={formData.min_salary} onChange={handleChange} className={inputClasses} />
                 </div>
                 <div>
                     <label htmlFor="maxSalary" className={labelClasses}>Max Salary</label>
-                    <input name="maxSalary" type="number" placeholder="Max Salary" value={formData.maxSalary} onChange={handleChange} className={inputClasses} />
+                    <input name="maxSalary" type="number" placeholder="Max Salary" value={formData.max_salary} onChange={handleChange} className={inputClasses} />
                 </div>
             </div>
 

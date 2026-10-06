@@ -1,3 +1,5 @@
+
+/** 
 import mongoose from "mongoose";
 
 const connectMongoDB = async (): Promise<void> => {
@@ -16,3 +18,5 @@ const connectMongoDB = async (): Promise<void> => {
 
 
 export default connectMongoDB;
+
+*/

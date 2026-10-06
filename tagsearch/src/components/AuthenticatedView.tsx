@@ -11,16 +11,16 @@ import TAGS_logo from "./TAGS_logo";
 
 type ApiJob = {
   user_id?: number;
-  id?: string;
-  userId?: string;
-  _id?: string;
+  id?: number|string;
+  //userId?: string;
+  //_id?: string;
   title: string;
   company?: string;
   city?: string;
   state?: string;
   employment_type?: string;
-  minSalary?: number | null;
-  maxSalary?: number | null;
+  min_salary?: number | null;
+  max_salary?: number | null;
   description: string;
   url?: string;
   rate?: string; //for added jobs
@@ -31,7 +31,7 @@ type ApiJob = {
 export default function AuthenticatedView() {
   const router = useRouter();
   const [userName, setUserName] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<number | null>(null);
   const { user, isLoggedIn, isLoading } = useAuth(); 
 
   const [filters, setFilters] = useState({
@@ -63,7 +63,7 @@ export default function AuthenticatedView() {
     "C++": false,
   });
 
-  const [editingJobId, setEditingJobId] = useState<string | null>(null);
+  const [editingJobId, setEditingJobId] = useState<number|string | null>(null);
   const [editingJobData, setEditingJobData] = useState<Partial<ApiJob>>({});
 
   const toggleFilter = (key: keyof typeof filters) => {
@@ -197,7 +197,7 @@ export default function AuthenticatedView() {
   fetchUser();
 }, []);
 
-  const handleDelete = async(jobId: string) => {
+  const handleDelete = async(jobId: number | string) => {
     if (!confirm("Are you sure you want to delete this job?")) return;
     try {
       const res = await fetch(`/api/tagJobs/${jobId}`, {
@@ -218,14 +218,14 @@ export default function AuthenticatedView() {
   }
 
   const handleEditClick = (job: ApiJob) => {
-    setEditingJobId(job._id ?? job.id ?? null);
+    setEditingJobId(job.id ?? null);
     setEditingJobData({
       title: job.title,
       company: job.company,
       city: job.city,
       state: job.state,
-      minSalary: job.minSalary ?? undefined,
-      maxSalary: job.maxSalary ?? undefined,
+      min_salary: job.min_salary ?? undefined,
+      max_salary: job.max_salary ?? undefined,
       description: job.description,
       url: job.url,
     });
@@ -280,14 +280,14 @@ export default function AuthenticatedView() {
 
     // salary range
     if (salaryRange && salaryRange !== "Any") {
-      const hasMin = job.minSalary != null;
-      const hasMax = job.maxSalary != null;
+      const hasMin = job.min_salary != null;
+      const hasMax = job.max_salary != null;
       const hasSalary = hasMin || hasMax;
 
       const avg =
         hasMin && hasMax
-          ? (job.minSalary! + job.maxSalary!) / 2
-          : job.minSalary ?? job.maxSalary ?? null;
+          ? (job.min_salary! + job.max_salary!) / 2
+          : job.min_salary ?? job.max_salary ?? null;
 
       if (salaryRange === "Not specified") {
         if (hasSalary) return false;
@@ -443,8 +443,8 @@ export default function AuthenticatedView() {
           <h3 className="text-xl font-bold text-text mb-4 border-b border-border-subtle pb-2">TAGSearch Listings</h3>
           <div className="grid grid-cols-1 gap-4 mb-8">
             {tagJobs.map((job) => (
-              <div key={job._id || job.id} className="bg-surface p-6 rounded-lg shadow-sm border border-border-subtle hover:shadow-md transition-shadow">
-                {editingJobId === (job._id || job.id) ? (
+              <div key={job.id} className="bg-surface p-6 rounded-lg shadow-sm border border-border-subtle hover:shadow-md transition-shadow">
+                {editingJobId === (job.id) ? (
                   // EDIT MODE
                   <div className="flex flex-col gap-3">
                     <label htmlFor="edit-title" className="text-sm font-semibold text-text">Job Title</label>
@@ -466,16 +466,16 @@ export default function AuthenticatedView() {
                         <label htmlFor="edit-minSalary" className="text-sm font-semibold text-text">Minimum Salary</label>
                          <input
                             className="w-1/2 px-3 py-2 rounded border border-border-subtle focus:ring-1 focus:ring-secondary outline-none"
-                            value={editingJobData.minSalary ?? ""}
-                            onChange={(e) => setEditingJobData({ ...editingJobData, minSalary: Number(e.target.value) })}
+                            value={editingJobData.min_salary ?? ""}
+                            onChange={(e) => setEditingJobData({ ...editingJobData, min_salary: Number(e.target.value) })}
                             placeholder="Min Salary"
                             type="number"
                         />
                         <label htmlFor="edit-maxSalary" className="text-sm font-semibold text-text">Maximum Salary</label>
                         <input
                             className="w-1/2 px-3 py-2 rounded border border-border-subtle focus:ring-1 focus:ring-secondary outline-none"
-                            value={editingJobData.maxSalary ?? ""}
-                            onChange={(e) => setEditingJobData({ ...editingJobData, maxSalary: Number(e.target.value) })}
+                            value={editingJobData.max_salary ?? ""}
+                            onChange={(e) => setEditingJobData({ ...editingJobData, max_salary: Number(e.target.value) })}
                             placeholder="Max Salary"
                             type="number"
                         />
@@ -496,8 +496,8 @@ export default function AuthenticatedView() {
                     <div className="flex justify-between items-start mb-2">
                         <h4 className="text-xl font-semibold text-primary">{job.title}</h4>
                         <span className="text-xs font-semibold bg-surface-alt text-text px-3 py-1 rounded-full border border-border-subtle whitespace-nowrap ml-2">
-                            {job.minSalary != null && job.maxSalary != null
-                                ? `$${job.minSalary.toLocaleString()} - $${job.maxSalary.toLocaleString()}`
+                            {job.min_salary != null && job.max_salary != null
+                                ? `$${job.min_salary.toLocaleString()} - $${job.max_salary.toLocaleString()}`
                                 : "Salary hidden"}
                         </span>
                     </div>
@@ -532,7 +532,7 @@ export default function AuthenticatedView() {
                                     Edit
                                 </button>
                                 <button 
-                                    onClick={() => handleDelete(job._id || job.id!)}
+                                    onClick={() => handleDelete(job.id!)}
                                     className="px-4 py-2 bg-white border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors"
                                 >
                                     Delete
@@ -558,8 +558,8 @@ export default function AuthenticatedView() {
                 <div className="flex justify-between items-start mb-2">
                     <h4 className="text-xl font-semibold text-primary">{job.title}</h4>
                      <span className="text-xs font-semibold bg-surface-alt text-text px-3 py-1 rounded-full border border-border-subtle whitespace-nowrap ml-2">
-                        {job.minSalary != null && job.maxSalary != null
-                            ? `$${job.minSalary.toLocaleString()} - $${job.maxSalary.toLocaleString()}`
+                        {job.min_salary != null && job.max_salary != null
+                            ? `$${job.min_salary.toLocaleString()} - $${job.max_salary.toLocaleString()}`
                             : "Salary hidden"}
                     </span>
                 </div>
