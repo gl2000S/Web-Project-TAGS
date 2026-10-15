@@ -113,11 +113,11 @@ export default function AddForm() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label htmlFor="minSalary" className={labelClasses}>Min Salary</label>
-                    <input name="minSalary" type="number" placeholder="Min Salary" value={formData.min_salary} onChange={handleChange} className={inputClasses} />
+                    <input name="min_salary" type="number" placeholder="Min Salary" value={formData.min_salary} onChange={handleChange} className={inputClasses} />
                 </div>
                 <div>
                     <label htmlFor="maxSalary" className={labelClasses}>Max Salary</label>
-                    <input name="maxSalary" type="number" placeholder="Max Salary" value={formData.max_salary} onChange={handleChange} className={inputClasses} />
+                    <input name="max_salary" type="number" placeholder="Max Salary" value={formData.max_salary} onChange={handleChange} className={inputClasses} />
                 </div>
             </div>
 
