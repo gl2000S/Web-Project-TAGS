@@ -16,7 +16,7 @@ export async function createUser(name: string, email: string, password_hash: str
 
 
 /** 
-import mongoose, { Schema, Document, Model } from "mongoose";
+// import mongoose, { Schema, Document, Model } from "mongoose";
 
 // Definitiom for a User document
 export interface IUser extends Document {
@@ -54,7 +54,7 @@ const UserSchema = new Schema<IUser>(
 
 // 3. Prevent model re-registration (important for Next.js hot reload)
 const User: Model<IUser> =
-  mongoose.models.User || mongoose.model<IUser>("User", UserSchema); // automatically sets the collection as 'users' in MongoDB
+  // mongoose.models.User || mongoose.model<IUser>("User", UserSchema); // automatically sets the collection as 'users' in MongoDB
 
 export default User;
 

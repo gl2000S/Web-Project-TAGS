@@ -27,7 +27,7 @@ export default function ContactPage() {
 
     return (
         <main className="min-h-screen flex flex-col bg-surface">
-            <Nav isLoggedIn={false} />
+            {/* <Nav isLoggedIn={false} /> */}
 
             <section className="flex-grow w-full max-w-4xl mx-auto px-5 py-10 flex flex-col gap-10">
                 

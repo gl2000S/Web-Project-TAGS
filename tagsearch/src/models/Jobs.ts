@@ -57,7 +57,7 @@ export async function deleteJob(id : string) {
 
 
 /** 
-import mongoose, { Schema, Document, models, model} from "mongoose";
+// import mongoose, { Schema, Document, models, model} from "mongoose";
 
 export interface IJob extends Document {
     title: string;
