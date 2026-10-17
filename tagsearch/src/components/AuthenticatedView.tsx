@@ -467,7 +467,7 @@ export default function AuthenticatedView() {
                          <input
                             className="w-1/2 px-3 py-2 rounded border border-border-subtle focus:ring-1 focus:ring-secondary outline-none"
                             value={editingJobData.min_salary ?? ""}
-                            onChange={(e) => setEditingJobData({ ...editingJobData, min_salary: Number(e.target.value) })}
+                            onChange={(e) => setEditingJobData({ ...editingJobData, min_salary: e.target.value == "" ? null : Number(e.target.value) })}
                             placeholder="Min Salary"
                             type="number"
                         />
@@ -475,7 +475,7 @@ export default function AuthenticatedView() {
                         <input
                             className="w-1/2 px-3 py-2 rounded border border-border-subtle focus:ring-1 focus:ring-secondary outline-none"
                             value={editingJobData.max_salary ?? ""}
-                            onChange={(e) => setEditingJobData({ ...editingJobData, max_salary: Number(e.target.value) })}
+                            onChange={(e) => setEditingJobData({ ...editingJobData, max_salary: e.target.value == "" ? null : Number(e.target.value) })}
                             placeholder="Max Salary"
                             type="number"
                         />

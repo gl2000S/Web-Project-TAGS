@@ -3,8 +3,24 @@ import { NextResponse } from "next/server";
 import { getAllJobs, createJob } from "@/models/Jobs";
 import jwt from "jsonwebtoken";
 
-export async function GET() {
+export async function GET(req: Request) {
   // await connectMongoDB();
+  const cookie = req.headers.get("cookie") || "";
+  const token = cookie
+    .split("; ")
+    .find((c) => c.startsWith("authToken="))
+    ?.split("=")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  try { 
+    jwt.verify(token, process.env.JWT_SECRET!);
+  } catch {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
   const jobs = await getAllJobs();
   return NextResponse.json({ jobs }, { status: 200 });
 }
